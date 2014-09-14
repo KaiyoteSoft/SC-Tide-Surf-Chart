@@ -90,9 +90,20 @@ def get_graph(j_data):
 
     return(point_list, time_labels, time_axis)
 
-# current_time = time.ctime(date)
+def get_surf(date_string):
+    surf_date = get_date(date_string)
+    spot_id = (147)
+    info = urllib2.urlopen("http://api.spitcast.com/api/spot/forecast/{}/?dval={}".format(spot_id, surf_date))
+    data = info.read()
+    j_surf_data = json.loads(data)
+    surf_data = (j_surf_data[6]["size_ft"])
+
+    return(surf_data)
+
+# instantiates functions
 date_string = get_date()
 date, j_data = get_tide(change_day)
+surf_data = get_surf(change_day)
 
 ## load fonts
 font = pygame.font.Font("fonts/animeace2_reg.ttf", 15)
@@ -116,6 +127,9 @@ day_text = header_font.render("DAY + 1", True, WHITE)
 day_rect = pygame.Rect(1000, 20, 110, 35)
 reset_text = header_font.render("RESET", True, WHITE)
 reset_rect = pygame.Rect(1000, 100, 100, 35)
+
+surf_text = header_font.render("The Hook: {}". format(surf_data), True, WHITE)
+surf_rect = pygame.Rect(30, 100, 300, 300)
 
 
 x = 10
@@ -177,6 +191,10 @@ while True:
 
     date_font = header_font.render("The date is {}".format(date), True, WHITE)
     windowSurface.blit(date_font, date_rect)
+    surf_data = get_surf(change_day)
+    surf_text = header_font.render("The Hook: {}". format(surf_data), True, WHITE)
+    windowSurface.blit(surf_text, surf_rect)
+
     windowSurface.blit(day_text, day_rect)
     windowSurface.blit(reset_text, reset_rect)
     pygame.draw.rect(windowSurface, WHITE, day_rect, 1)
